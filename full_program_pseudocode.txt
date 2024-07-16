@@ -1,0 +1,297 @@
+NOTE
+elements that are only initialized and not displayed are displayed in the 
+styling functions --> ignored since this pseudocode is about functionality NOT styling.
+
+----------------------------------------------------------------------------------------
+
+SET COUNTER to  0
+SET game_state_tracker to a 3x3 2D array populated with 0s
+SET winner to "None"  
+SET icon_style to a comic icon style
+SET playAgain to True
+SET start_game_bool to False
+SET start_button_bool_called to False
+SET game_started to True
+
+FUNCTION start_game():
+    DECLARE GLOBAL start_game_bool
+    SET start_game_bool to TRUE
+    DECLARE GLOBAL start_button_bool_called variable
+    SET start_button_bool_called to TRUE
+    DESTROY home_window
+ENDFUNCTION
+
+FUNCTION exit_app():
+    PROMPT MESSAGEBOX to confirm if user wants to quit and SET confirmation to user response
+    IF confirmation is "yes" THEN:
+        DECLARE GLOBAL play_again
+        SET play_again to FALSE
+    TRY:
+        DESTROY home_window
+    EXCEPT error:
+        DESTROY game_window
+ENDFUNCTION
+
+FUNCTION settings():
+    FORGET homepage_frame
+    DISPLAY settings_frame
+ENDFUNCTION
+
+FUNCTION return_to_home():
+    FORGET settings_frame
+    DISPLAY home_frame
+ENDFUNCTION
+
+FUNCTION go_home_page():
+    DESTROY game_window
+    
+    DECLARE GLOBAL game_started
+    DECLARE GLOBAL counter
+    DECLARE GLOBAL game_state_tracker
+    DECLARE GLOBAL winner
+    DECLARE GLOBAL icon_style
+
+    SET counter game_started to TRUE
+    SET counter to 0
+    SET game_state_trackerto a 3x3 2D array populated with 0s
+    SET winner to "None"
+    SET icon_style to a comic icon style
+ENDFUNCTION
+
+FUNCTION new_game():
+    FOR each row in points:
+        FOR each col in points:
+            SET each points STATE to NORMAL
+            SET each elements' TEXT to whitespace
+
+    DECLARE GLOBAL counter
+    DECLARE GLOBAL arr
+    DECLARE GLOBAL winner
+    SET counter to 0
+    SET game_state_trackerto a 3x3 2D array populated with 0s
+    SET winner to "None"
+
+    SET winner_label TEXT to ""
+    FORGET go_home_page_btn
+    DISPLAY turn_label and SET turn_label TEXT to "O" 
+ENDFUNCTION
+
+FUNCTION tic_tac_toe(row, col):
+    DECLARE GLOBAL counter 
+    DECLARE GLOBAL arr
+
+    IF counter is even THEN:
+        SET X_turn to TRUE
+    ELSE:
+        SET X_turn to FALSE
+    ENDIF
+
+    IF points[row][col] do not have either X or O THEN:
+        IF X_turn is TRUE THEN:
+            SET the TEXT in points[row][col] to be 'X'
+            SET game_state_tracker[row][col] to 1 (to represent 'X')
+        ELSE:
+            SET the TEXT in points[row][col] to be 'O'
+            SET game_state_tracker[row][col] to 1 (to represent 'O')
+        ENDIF
+    ELSE:
+        DECREMENT counter by 1
+    ENDIF 
+    
+    CALL turn_signal to update the turn of the player
+
+    CALL check_winner with 1 to check if X has won
+    CALL check_winner with 2 to check if O has won
+    
+    IF counter is equal to 9 THEN:
+        CALL call_tie to check for a tie
+ENDFUNCTION
+
+FUNCTION count_click(event):
+    DECLARE GLOBAL counter
+    INCREMENT counter by 1
+
+FUNCTION turn_signal():
+    IF counter is even THEN:
+        SET turn_label to "O"
+    ELSE:
+        SET turn_label to "X"
+ENDFUNCTION
+
+FUNCTION check_winner(indicator):
+    DECLARE GLOBAL winner
+    IF indicator is equal to 1 THEN:
+        SET prompt_when_won to equal "X IS THE WINNER :D"
+    ELSE:
+        SET prompt_when_won to equal "O IS THE WINNER :D"
+    ENDIF
+
+    FOR each row in the 2d array:
+        FOR each col in the 2d array:
+            IF all elements in any one column are equal and not blank THEN:
+                CALL update_winner with prompt_when_won
+                RETURN to break out of function
+            ELIF all elements in any one row are equal and not blank THEN:
+                CALL update_winner with prompt_when_won
+                RETURN to break out of function
+            ENDIF
+        ENDFOR
+
+    IF each number in either diagonal is equal and not blank THEN:
+        CALL update_winner with prompt_when_won
+        RETURN to break out of function
+ENDFUNCTION
+
+FUNCTION update_winner(prompt):
+    SET winner_label TEXT to prompt
+    CALL disable_buttons
+ENDFUNCTION
+
+FUNCTION disable_buttons():
+    FOR each row in the 2d array:
+        FOR each col in the 2d array:
+            SET each points STATE to DISABLED
+            SET each points FOREGROUND to be a different color
+ENDFUNCTION
+
+FUNCTION call_tie():
+    SET winner_label's TEXT to "THE GAME IS A TIE :/"
+    CALL disable_buttons()
+ENDFUNCTION
+
+FUNCTION select_default_theme():
+    SET default styling for all elements on homepage and settings
+ENDFUNCTION
+
+FUNCTION select_comic_theme():
+    SET comic styling for all elements on homepage and settings
+ENDFUNCTION
+
+FUNCTION select_default_icons():
+    SET default styling for all elements on homepage and settings
+ENDFUNCTION
+
+FUNCTION select_comic_icons():
+    SET comic styling for all elements on homepage and settings
+ENDFUNCTION
+
+WHILE play_again and game_started are TRUE:
+    SET game_started to FALSE
+
+    INIT home_window as a Window (Start)
+    SET home_window TITLE to "Tic Tac Toe Homepage"
+    SET home_window GEOMETRY to 500 by 500 pixels
+    SET home_window to unresizable
+
+    INIT and DISPLAY homepage_frame
+    INIT settings_frame
+    
+    INIT homepage_title_comic
+    SET homepage_title_comic to CUSTOM FONT
+    INIT homepage_title_default
+
+    INIT title_comic
+    INIT edition
+    INIT stdnt_id
+    INIT play_btn
+    IF play_btn is CLICKED THEN:
+        CALL start_game
+    ENDIF
+    INIT settings_btn
+    IF settings_btn is CLICKED THEN:
+        CALL settings
+    ENDIF
+    INIT exit_btn
+    IF exit_btn is CLICKED THEN:
+        CALL exit_app
+    ENDIF
+    INIT img_lbl
+
+    INIT and DISPLAY settings_title
+    
+    INIT and DISPLAY theme_frame
+    INIT selected_theme_val as a method to GET values from each radiobtn
+    INIT and DISPLAY default_theme_radiobtn
+    IF default_theme_radiobtn is CLICKED THEN:
+        CALL select_default_theme
+    ENDIF
+    INIT and DISPLAY comic_theme_radiobtn
+    IF comic_theme_radiobtn is CLICKED THEN:
+        CALL select_comic_theme
+    ENDIF
+    SET comic_theme_radiobtn to be the DEFAULT selected_theme_val
+
+    INIT and DISPLAY icon_frame
+    INIT selected_icon_val as a method to GET values from each radiobtn
+    INIT and DISPLAY default_icon_radiobtn
+    IF default_icon_radiobtn is CLICKED THEN:
+        CALL select_default_icons
+    ENDIF
+    INIT and DISPLAY comic_icon_radiobtn
+    IF comic_icon_radiobtn is CLICKED THEN:
+        CALL select_comic_icons
+    ENDIF
+    SET comic_icon_radiobtn to be the DEFAULT selected_icon_val
+
+    INIT and DISPLAY return_btn
+    IF return_btn is CLICKED THEN:
+        CALL return_to_home
+    ENDIF
+
+    CALL select_comic_theme to display comic theme by default
+
+    MAINLOOP over home_window (End)
+
+    # -- TRANSITION TO GAME WINDOW --
+
+    IF start_game_bool is TRUE and start_button_called_bool is TRUE THEN:
+        INIT game_window as a new Window
+        SET game_window TITLE to "Tic Tac Toe Game"
+        SET game_window GEOMETRY to 480 by 500 pixels
+        SET game_window to unresizable
+
+        INIT and DISPLAY ttt_grid
+
+        SET points to a non-empty 2D 3x3 array
+        FOR each row_ in the 2d array:
+            FOR each col in the 2d array:
+                SET points[row_][col]
+                    
+                IF points[row_][col] is CLICKED THEN:
+                    CALL tic_tac_toe function with row and column
+                ENDIF      
+
+                BIND poitns[row_][col] to CALL count_click every time it's CLICKED
+                
+                SET points[row_][col] to be the GRID POSITION where column=col, row=row_
+            ENDFOR
+        ENDFOR
+        
+        INIT and DISPLAY display_grid
+        INIT and DISPLAY turn_label
+        
+        INIT and DISPLAY new_game_btn
+        IF new_game_btn is CLICKED THEN:
+            CALL new_game
+        ENDIF
+
+        INIT and DISPLAY winner_label
+        
+        INIT and DISPLAY go_home_page_btn
+        IF go_home_page_btn is CLICKED THEN:
+            CALL go_home_page
+        ENDIF
+
+        INIT and DISPLAY exit_game
+        IF exit_game is CLICKED THEN:
+            CALL exit_app
+        ENDIF
+        
+        SET playAgain to TRUE
+
+        MAINLOOP over game_window
+
+    ELSE:
+        EXIT the window
+    ENDIF
+ENDWHILE
