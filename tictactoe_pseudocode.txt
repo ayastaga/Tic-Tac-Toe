@@ -1,0 +1,106 @@
+FUNCTION tic_tac_toe(row, col):
+    DECLARE GLOBAL counter 
+    DECLARE GLOBAL arr
+
+    IF counter is even THEN:
+        SET X_turn to TRUE
+    ELSE:
+        SET X_turn to FALSE
+    ENDIF
+
+    IF points[row][col] do not have either X or O THEN:
+        IF X_turn is TRUE THEN:
+            SET the TEXT in points[row][col] to be 'X'
+            SET game_state_tracker[row][col] to 1 (to represent 'X')
+        ELSE:
+            SET the TEXT in points[row][col] to be 'O'
+            SET game_state_tracker[row][col] to 1 (to represent 'O')
+        ENDIF
+    ELSE:
+        DECREMENT counter by 1
+    ENDIF 
+    
+    CALL turn_signal to update the turn of the player
+
+    CALL check_winner with 1 to check if X has won
+    CALL check_winner with 2 to check if O has won
+    
+    IF counter is equal to 9 THEN:
+        CALL call_tie to check for a tie
+ENDFUNCTION
+
+FUNCTION count_click(event):
+    DECLARE GLOBAL counter
+    INCREMENT counter by 1
+
+FUNCTION turn_signal():
+    IF counter is even THEN:
+        SET turn_label to "O"
+    ELSE:
+        SET turn_label to "X"
+ENDFUNCTION
+
+FUNCTION check_winner(indicator):
+    DECLARE GLOBAL winner
+    IF indicator is equal to 1 THEN:
+        SET prompt_when_won to equal "X IS THE WINNER :D"
+    ELSE:
+        SET prompt_when_won to equal "O IS THE WINNER :D"
+    ENDIF
+
+    FOR each row in the 2d array:
+        FOR each col in the 2d array:
+            IF all elements in any one column are equal and not blank THEN:
+                CALL update_winner with prompt_when_won
+                RETURN to break out of function
+            ELIF all elements in any one row are equal and not blank THEN:
+                CALL update_winner with prompt_when_won
+                RETURN to break out of function
+            ENDIF
+        ENDFOR
+
+    IF each number in either diagonal is equal and not blank THEN:
+        CALL update_winner with prompt_when_won
+        RETURN to break out of function
+ENDFUNCTION
+
+FUNCTION update_winner(prompt):
+    SET winner_label TEXT to prompt
+    CALL disable_buttons
+ENDFUNCTION
+
+FUNCTION disable_buttons():
+    FOR each row in the 2d array:
+        FOR each col in the 2d array:
+            SET each points STATE to DISABLED
+            SET each points FOREGROUND to be a different color
+ENDFUNCTION
+
+FUNCTION call_tie():
+    SET winner_label's TEXT to "THE GAME IS A TIE :/"
+    CALL disable_buttons()
+ENDFUNCTION
+
+# -- GAME SEQUENCE --
+
+INIT game_window as a new Window
+SET game_window TITLE to "Tic Tac Toe Game"
+SET game_window GEOMETRY to 480 by 500 pixels
+SET game_window to unresizable
+
+INIT and DISPLAY ttt_grid
+
+SET points to a non-empty 2D 3x3 array
+FOR each row_ in the 2d array:
+    FOR each col in the 2d array:
+        SET points[row_][col]
+            
+        IF points[row_][col] is CLICKED THEN:
+            CALL tic_tac_toe function with row and column
+        ENDIF      
+
+        BIND poitns[row_][col] to CALL count_click every time it's CLICKED
+        
+        SET points[row_][col] to be the GRID POSITION where column=col, row=row_
+    ENDFOR
+ENDFOR
