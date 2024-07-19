@@ -275,7 +275,7 @@ while playAgain and gameStarted:
     theme_frame.pack(fill="x", expand=0)
     select_theme_val = IntVar()
     # Radiobuttons for theme selection
-    default_theme_radiobtn = Radiobutton(theme_frame, text="DEFAULT", bg="white", value=1, variable=select_theme_val, command=select_default_theme) # do nothing
+    default_theme_radiobtn = Radiobutton(theme_frame, text="DEFAULT", bg="white", value=1, variable=select_theme_val, command=select_default_theme)
     default_theme_radiobtn.grid(sticky=W)
     comic_theme_radiobtn = Radiobutton(theme_frame, text="OLD COMICS", bg="white", value=0, variable=select_theme_val, command=select_comic_theme)
     comic_theme_radiobtn.grid(row=1, column=0, sticky=W)
